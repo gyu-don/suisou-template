@@ -1,0 +1,66 @@
+services:
+  open-webui:
+    build:
+      context: sandbox
+    init: true
+    restart: unless-stopped
+    network_mode: "service:wg-client"
+    volumes:
+      - mitmproxy-ca:/mitmproxy-ca:ro
+      - open-webui-data:/app/backend/data
+    depends_on:
+      wg-client:
+        condition: service_healthy
+
+  wg-client:
+    build:
+      context: wg-client
+    init: true
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    cap_drop:
+      - ALL
+    volumes:
+      - mitmproxy-ca:/mitmproxy-ca:ro
+    ports:
+      - "3000:8080"
+    depends_on:
+      router:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/wg-ready"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    networks:
+      - tunnel
+
+  router:
+    build:
+      context: router
+    init: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - tunnel
+      - external
+    volumes:
+      - mitmproxy-ca:/home/mitmproxy/.mitmproxy
+      - ./router/config.toml:/etc/suisou/config.toml:ro
+    healthcheck:
+      test: ["CMD", "test", "-f", "/home/mitmproxy/.mitmproxy/wireguard.conf"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  open-webui-data:
+  mitmproxy-ca:
+
+networks:
+  tunnel:
+    driver: bridge
+  external:
+    driver: bridge

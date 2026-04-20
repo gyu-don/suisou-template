@@ -1,0 +1,23 @@
+# compose.override.yml — personal overrides (auto-merged with compose.yml)
+# Copy this file to compose.override.yml and edit as needed.
+
+services:
+  open-webui:
+    environment:
+      # Dummy credentials for the sandbox — the router replaces SUISOU__*
+      # markers with real values from its own environment.
+      # - ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY
+      # - OPENAI_API_KEY=SUISOU__OPENAI_API_KEY
+
+    # --- Ollama example ---
+    # To use a local Ollama instance on the host, set:
+    # - OPENAI_API_BASE_URL=http://host.docker.internal:11434/v1
+    # - OPENAI_API_KEY=ollama
+
+  router:
+    environment:
+      # Real API keys — pass through from host environment.
+      # - OPENAI_API_KEY
+      # - ANTHROPIC_API_KEY
+      # - GOOGLE_API_KEY
+      # - GITHUB_TOKEN
