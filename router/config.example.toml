@@ -1,0 +1,245 @@
+# suisou router configuration
+#
+# Copy to config.toml and edit:
+#   cp config.example.toml config.toml
+#
+# Each [services.<name>] block defines a group of endpoints the agent may
+# access, along with optional credential-injection rules.
+#
+# Credential injection uses a naming convention instead of explicit dummy
+# values.  Set the sandbox environment variable to the literal string
+# "SUISOU__<ENV_NAME>" (e.g. ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY).
+# When the router sees that marker in the configured header, it replaces it
+# with the real value from its own environment.
+
+[services.anthropic]
+endpoints = [
+  { domain = "api.anthropic.com", methods = ["POST"], paths = ["/v1/messages", "/v1/messages/count_tokens"] },
+  { domain = "api.anthropic.com", methods = ["GET"],  paths = ["/v1/models", "/v1/models/*"] },
+]
+
+[services.anthropic.credentials]
+header = "x-api-key"
+env    = "ANTHROPIC_API_KEY"
+
+[services.openai]
+endpoints = [
+  { domain = "api.openai.com", methods = ["POST"] },
+]
+
+[services.openai.credentials]
+header = "authorization"
+env    = "OPENAI_API_KEY"
+
+# --- GitHub ---
+# Git clone/fetch uses Smart HTTP:
+#   GET  /info/refs?service=git-upload-pack
+#   POST /git-upload-pack
+# Push uses POST /git-receive-pack.  The paths filter below restricts
+# POST to git-upload-pack only, so push is blocked.
+
+[services.github-git]
+endpoints = [
+  { domain = "github.com",             methods = ["GET"] },
+  { domain = "github.com",             methods = ["POST"], paths = ["/*/git-upload-pack"] },
+  { domain = "*.github.com",           methods = ["GET"] },
+  { domain = "*.githubusercontent.com", methods = ["GET"] },
+]
+
+# Uncomment to use the GitHub REST / GraphQL API (api.github.com).
+# [services.github-api]
+# endpoints = [
+#   { domain = "api.github.com", methods = ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+# ]
+#
+# [services.github-api.credentials]
+# header = "authorization"
+# env    = "GITHUB_TOKEN"
+
+# --- Discord ---
+# [services.discord]
+# endpoints = [
+#   { domain = "discord.com", methods = ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+#   { domain = "*.discord.gg" },
+#   { domain = "cdn.discordapp.com", methods = ["GET"] },
+#   { domain = "gateway.discord.gg" },
+# ]
+#
+# [services.discord.credentials]
+# header = "authorization"
+# env    = "DISCORD_BOT_TOKEN"
+
+# --- Tavily (web search API) ---
+# [services.tavily]
+# endpoints = [
+#   { domain = "api.tavily.com", methods = ["GET", "POST"] },
+# ]
+#
+# [services.tavily.credentials]
+# header = "authorization"
+# env = "TAVILY_API_KEY"
+
+# --- Local LLM ---
+# For a local LLM instance on the host (see compose.override.example.yml).
+# Uncomment the block matching your server and its default port.
+#
+# [services.ollama]
+# endpoints = [
+#   { domain = "host.docker.internal", allow_plain_http = true, ports = [11434] },
+# ]
+#
+# [services.llama-cpp]
+# endpoints = [
+#   { domain = "host.docker.internal", allow_plain_http = true, ports = [8080] },
+# ]
+#
+# [services.vllm]
+# endpoints = [
+#   { domain = "host.docker.internal", allow_plain_http = true, ports = [8000] },
+# ]
+
+# --- Package registries ---
+[services.pkg]
+endpoints = [
+  { domain = "pypi.org",               methods = ["GET"] },
+  { domain = "files.pythonhosted.org", methods = ["GET"] },
+  { domain = "npmjs.com",              methods = ["GET"] },
+  { domain = "registry.npmjs.org",     methods = ["GET"] },
+  { domain = "packagist.org",          methods = ["GET"] },
+  { domain = "nuget.org",              methods = ["GET"] },
+  { domain = "getcomposer.org",        methods = ["GET"] },
+]
+
+# --- CDN ---
+[services.cdn]
+endpoints = [
+  { domain = "cdn.jsdelivr.net", methods = ["GET"] },
+  { domain = "unpkg.com",        methods = ["GET"] },
+]
+
+# --- Code hosting ---
+[services.code-hosting]
+endpoints = [
+  { domain = "gitlab.com",             methods = ["GET"] },
+  { domain = "*.gitlab.com",           methods = ["GET"] },
+  { domain = "*.gitlab.io",            methods = ["GET"] },
+  { domain = "bitbucket.org",          methods = ["GET"] },
+  { domain = "codeberg.org",           methods = ["GET"] },
+  { domain = "docker.com",             methods = ["GET"] },
+  { domain = "hub.docker.com",         methods = ["GET"] },
+  { domain = "registry-1.docker.io",   methods = ["GET"] },
+  { domain = "ghcr.io",                methods = ["GET"] },
+  { domain = "quay.io",                methods = ["GET"] },
+]
+
+# --- Documentation ---
+[services.docs]
+endpoints = [
+  { domain = "docs.openclaw.ai", methods = ["GET"] },
+  { domain = "nodejs.org",     methods = ["GET"] },
+  { domain = "react.dev",      methods = ["GET"] },
+  { domain = "git-scm.com",    methods = ["GET"] },
+  { domain = "postgresql.org", methods = ["GET"] },
+  { domain = "web.dev",        methods = ["GET"] },
+  { domain = "msdn.com",       methods = ["GET"] },
+  { domain = "developer.mozilla.org", methods = ["GET"] },
+]
+
+[services.reference]
+endpoints = [
+  { domain = "stackoverflow.com", methods = ["GET"] },
+  { domain = "stackexchange.com", methods = ["GET"] },
+  { domain = "w3.org",            methods = ["GET"] },
+  { domain = "ietf.org",          methods = ["GET"] },
+  { domain = "rfc-editor.org",    methods = ["GET"] },
+  { domain = "mozilla.org",       methods = ["GET"] },
+  { domain = "apache.org",        methods = ["GET"] },
+  { domain = "gnu.org",           methods = ["GET"] },
+  { domain = "openssl.org",       methods = ["GET"] },
+  { domain = "nginx.org",         methods = ["GET"] },
+]
+
+[services.wikipedia]
+endpoints = [
+  { domain = "*.wikipedia.org", methods = ["GET"] },
+  { domain = "*.wikimedia.org", methods = ["GET"] },
+]
+
+[services.tech-blogs]
+endpoints = [
+  { domain = "zenn.dev",             methods = ["GET"] },
+  { domain = "qiita.com",            methods = ["GET"] },
+  { domain = "note.com",             methods = ["GET"] },
+  { domain = "dev.to",               methods = ["GET"] },
+  { domain = "medium.com",           methods = ["GET"] },
+  { domain = "hatenablog.com",       methods = ["GET"] },
+  { domain = "*.hatenablog.com",     methods = ["GET"] },
+  { domain = "substack.com",         methods = ["GET"] },
+  { domain = "*.substack.com",       methods = ["GET"] },
+  { domain = "news.ycombinator.com", methods = ["GET"] },
+]
+
+[services.ai-vendor-blogs]
+endpoints = [
+  { domain = "openai.com",             methods = ["GET"] },
+  { domain = "anthropic.com",          methods = ["GET"] },
+  { domain = "deepmind.google",        methods = ["GET"] },
+  { domain = "research.google",        methods = ["GET"] },
+  { domain = "blog.google",            methods = ["GET"] },
+  { domain = "ai.meta.com",            methods = ["GET"] },
+  { domain = "huggingface.co",         methods = ["GET"] },
+  { domain = "discuss.huggingface.co", methods = ["GET"] },
+  { domain = "mistral.ai",             methods = ["GET"] },
+  { domain = "stability.ai",           methods = ["GET"] },
+  { domain = "cohere.com",             methods = ["GET"] },
+]
+
+[services.news]
+endpoints = [
+  { domain = "asahi.com",       methods = ["GET"] },
+  { domain = "mainichi.jp",     methods = ["GET"] },
+  { domain = "yomiuri.co.jp",   methods = ["GET"] },
+  { domain = "nikkei.com",      methods = ["GET"] },
+  { domain = "itmedia.co.jp",   methods = ["GET"] },
+  { domain = "reuters.com",     methods = ["GET"] },
+  { domain = "bbc.com",         methods = ["GET"] },
+  { domain = "theguardian.com", methods = ["GET"] },
+  { domain = "nytimes.com",     methods = ["GET"] },
+  { domain = "techcrunch.com",  methods = ["GET"] },
+  { domain = "wired.com",       methods = ["GET"] },
+  { domain = "arstechnica.com", methods = ["GET"] },
+  { domain = "theverge.com",    methods = ["GET"] },
+]
+
+[services.tokyo-events]
+endpoints = [
+  { domain = "gotokyo.org",       methods = ["GET"] },
+  { domain = "tokyoartbeat.com",  methods = ["GET"] },
+  { domain = "timeout.com",       methods = ["GET"] },
+  { domain = "metro.tokyo.lg.jp", methods = ["GET"] },
+]
+
+# --- Moltbook (read-only) ---
+# AI agent social network. All endpoints require an API key.
+# Only GET is listed here to prevent the agent from posting, commenting, or voting.
+# Register the agent first (see AGENTS-user.md), then store the key in Doppler.
+# [services.moltbook]
+# endpoints = [
+#   { domain = "www.moltbook.com", methods = ["GET"] },
+# ]
+#
+# [services.moltbook.credentials]
+# header = "authorization"
+# env    = "MOLTBOOK_API_KEY"
+
+[services.academic]
+endpoints = [
+  { domain = "arxiv.org",           methods = ["GET"] },
+  { domain = "doi.org",             methods = ["GET"] },
+  { domain = "semanticscholar.org", methods = ["GET"] },
+  { domain = "ieee.org",            methods = ["GET"] },
+  { domain = "acm.org",             methods = ["GET"] },
+  { domain = "biorxiv.org",         methods = ["GET"] },
+  { domain = "science.org",         methods = ["GET"] },
+  { domain = "springeropen.com",    methods = ["GET"] },
+]
