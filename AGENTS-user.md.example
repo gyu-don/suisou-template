@@ -21,8 +21,8 @@ to the upstream application's documentation.
 cp router/config.example.toml router/config.toml
 cp compose.override.example.yml compose.override.yml
 # edit both files as needed
-docker compose build
-docker compose up
+docker compose -f compose.yml -f compose.override.yml build
+docker compose -f compose.yml -f compose.override.yml up
 ```
 
 ## Configuration

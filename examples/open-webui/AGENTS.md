@@ -2,17 +2,13 @@
 
 A Docker Compose-based sandbox environment for [Open WebUI](https://docs.openwebui.com/).
 
-Unlike similar projects such as OpenShell, suisou favors simplicity by relying on familiar Docker tooling for interacting with sandbox containers.
-
 ## Architecture
 
-The environment is defined in `compose.yml` with the following services:
-
-- **open-webui** — the Open WebUI container. Shares the `wg-client` network namespace (`network_mode: "service:wg-client"`), so all its outbound traffic flows through the WireGuard tunnel.
-- **wg-client** — a WireGuard client that establishes a tunnel to the router and enforces a kill-switch via iptables. The kill-switch blocks all outbound traffic except through the tunnel, preventing the application from bypassing the proxy. The Open WebUI container has no `NET_ADMIN` capability, so it cannot alter these firewall rules.
-- **router** — mitmproxy in WireGuard mode (`--mode wireguard`). Terminates the WireGuard tunnel, intercepts all HTTP/HTTPS traffic transparently, and enforces a service-based domain + HTTP-method allowlist (`router/config.toml`). Replaces `SUISOU__*` credential markers in outbound requests with real values from its own environment.
+- **app** — Open WebUI container. Shares the `wg-client` network namespace, so all outbound traffic flows through the WireGuard tunnel.
+- **wg-client** — WireGuard client with iptables kill-switch. The app container cannot alter firewall rules.
+- **router** — mitmproxy in WireGuard mode. Enforces domain allowlist (`router/config.toml`) and credential injection.
 
 ## Documentation
 
-- [AGENTS-developer.md](AGENTS-developer.md) — contributor guide (version control, project layout, coding style).
-- [AGENTS-user.md](AGENTS-user.md) — user guide (setup and usage).
+- [AGENTS-user.md](AGENTS-user.md) — setup and usage.
+- [AGENTS-developer.md](AGENTS-developer.md) — contributor guide.

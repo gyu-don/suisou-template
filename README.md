@@ -12,15 +12,21 @@ exfiltrating data or credentials.
 1. Click **Use this template → Create a new repository** on GitHub.
 2. Clone the new repository and follow the step-by-step guide in
    [AGENTS-template.md](AGENTS-template.md).
-3. Keep `router/`, `wg-client/`, `sandbox/entrypoint.sh`, and
+3. Keep `compose.yml`, `router/`, `wg-client/`, `sandbox/entrypoint.sh`, and
    `AGENTS-suisou.md` unmodified in your derived project — they are the
    security boundary and are kept in sync with this template.
 
-Existing implementations to copy from:
+Existing implementations:
 
 - [examples/comfyui/](examples/comfyui/) — ComfyUI (image generation,
   custom nodes that execute arbitrary Python).
-- *(Open WebUI and OpenClaw examples to follow.)*
+- [examples/open-webui/](examples/open-webui/) — Open WebUI (LLM chat interface).
+
+Run an example from the repo root:
+
+```sh
+docker compose -f compose.yml -f examples/comfyui/compose.override.yml up
+```
 
 ## Contributing to the template itself
 

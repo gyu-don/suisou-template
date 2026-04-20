@@ -1,10 +1,12 @@
-# Edit the `app` service below to match your application: rename it,
-# adjust the build context or image, add per-app volumes, and list the
-# ports you want exposed on the `wg-client` service (the sandbox shares
-# its network namespace, so ports are published there, not on `app`).
+# Suisou base compose.yml — fixed structure, do not modify.
 #
-# The `wg-client` and `router` services are the suisou core: adopt them
-# verbatim and avoid local modifications.  See AGENTS-suisou.md.
+# Customize via compose.override.yml:
+#   - app: build context, volumes
+#   - wg-client: ports
+#   - router: environment (for credential injection)
+#
+# Run: docker compose up
+# With example: docker compose -f compose.yml -f examples/X/compose.override.yml up
 
 services:
   app:
@@ -31,11 +33,6 @@ services:
       - ALL
     volumes:
       - mitmproxy-ca:/mitmproxy-ca:ro
-    # Publish your application's ports here.  The sandbox container
-    # shares this network namespace, so its listeners show up on
-    # wg-client's interfaces.
-    # ports:
-    #   - "3000:3000"
     depends_on:
       router:
         condition: service_healthy

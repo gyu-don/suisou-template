@@ -145,6 +145,7 @@ The following are the security boundary.  Never edit them locally; any
 bug fix or feature must flow through the `suisou-template` repository so
 it applies to every derived project.
 
+- `compose.yml` (base service definitions; customize via `compose.override.yml`)
 - `router/Dockerfile`
 - `router/addon.py`
 - `wg-client/Dockerfile`
@@ -159,12 +160,11 @@ These exist in the template as placeholders or examples and are expected
 to be rewritten in each derived project:
 
 - `sandbox/Dockerfile` — replaced with the application's image.
-- `compose.yml` — the `app` service is renamed and customized; the
-  `wg-client.ports` list is set to publish whatever the application
-  listens on.
+- `compose.override.yml` — app-specific overrides: build context, volumes,
+  ports, and credential injection.  Never committed (contains or references
+  secrets).
 - `router/config.toml` — copied from `config.example.toml` and edited to
   enable only the allowlist services the application needs.
-- `compose.override.yml` — local credentials; never committed.
 - `README.md`, `AGENTS.md`, `AGENTS-user.md`, `AGENTS-developer.md` —
   rewritten for the specific application.
 
@@ -204,6 +204,7 @@ derived project:
 git remote add template https://github.com/gyu-don/suisou-template.git
 git fetch template
 git checkout template/main -- \
+    compose.yml \
     router/Dockerfile router/addon.py \
     wg-client/Dockerfile wg-client/entrypoint.sh \
     sandbox/entrypoint.sh \

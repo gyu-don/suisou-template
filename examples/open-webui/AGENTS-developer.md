@@ -2,69 +2,24 @@
 
 ## Language
 
-Use English for all code, configuration files, and documentation.
-
-## Documentation Principles
-
-- Do not duplicate information that is already expressed in code or configuration files.
-- If a doc restates what a file already shows, remove the duplication and point to the file instead.
-
-## Version Control
-
-This project uses [jj](https://martinvonz.github.io/jj/) for version control.
-
-- **Record granularity**: one change per logical unit (a feature, a fix, or a config change). Don't bundle unrelated changes.
-- **Commit messages**: imperative mood, one-line summary. Add a body only when the "why" isn't obvious from the diff. Examples:
-  - `Add ollama endpoint to router allowlist`
-  - `Fix credential injection for WebSocket payloads`
-  - `Separate project and local settings`
+English for all code, configuration, and documentation.
 
 ## Verification
 
-Always run at minimum:
-
 ```sh
-docker compose config -q   # validate compose.yml syntax
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml config -q
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml build
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml up -d
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml ps
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml logs router --tail=20
 ```
 
-When `compose.yml`, `Dockerfile`, or entrypoint scripts change, also:
-
-```sh
-docker compose build && docker compose up -d
-docker compose ps
-docker compose logs router --tail=20
-```
-
-When changes affect routing, allowlist enforcement, or credential injection, also
-run an end-to-end policy check against the live stack. If the environment is
-managed by Doppler, use `doppler run -- docker compose ...` for these commands.
-
-Required checks:
-
-- Allowed outbound traffic still succeeds. Example: a `GET` to an allowlisted
-  HTTPS domain such as `https://github.com/` returns `200`.
-- Blocked outbound traffic is still denied. Example: a `GET` to a non-allowlisted
-  HTTPS domain such as `https://example.com/` returns `403`.
-- Credential injection only expands the env vars explicitly allowed for the
-  matched service or host.
-- Markers for env vars that are not allowed for that service or host remain
-  unchanged.
-
-These checks are mandatory for changes to `router/addon.py`, `router/config.toml`,
-`compose.yml`, `wg-client/`, and sandbox entrypoint or networking logic. They are
-part of the project's core security boundary, not optional smoke tests.
+For routing/credential changes, run the full verification checklist in AGENTS-suisou.md.
 
 ## Project Layout
 
 ```
-compose.yml          # Service definitions (open-webui, wg-client, router)
-wg-client/           # WireGuard client container (tunnel + kill-switch)
-references/          # Optional local reference material (not tracked upstream)
+compose.override.yml     # App-specific overrides (build, volumes, ports)
+sandbox/Dockerfile       # Open WebUI image
+router/config.toml       # Allowlist
 ```
-
-The `references/` directory is reserved for optional local reference material. Do not rely on its contents being present in a fresh clone.
-
-## Coding Style
-
-- Keep configuration minimal and explicit.
-- Prefer standard Docker / Compose idioms over custom abstractions.

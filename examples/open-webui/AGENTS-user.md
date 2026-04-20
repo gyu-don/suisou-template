@@ -1,40 +1,25 @@
 # User Guide
 
-For detailed Open WebUI documentation, see <https://docs.openwebui.com/>.
+Open WebUI docs: <https://docs.openwebui.com/>
 
 ## Prerequisites
 
 - Docker and Docker Compose
-- Linux kernel 5.6+ (for built-in WireGuard support)
+- Linux kernel 5.6+ (WireGuard)
 
 ## Quick Start
 
 ```sh
-cp router/config.example.toml router/config.toml
+docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
 ```
 
-Build and start the services:
-
-```sh
-docker compose build
-docker compose up
-```
-
-Open WebUI will be available at <http://localhost:3000/>.
-
-Edit `router/config.toml` to match your needs. The example file shows the available format.
+Open <http://localhost:3000/>.
 
 ## Configuration
 
 ### `router/config.toml`
 
-Controls which domains the agent can access and how credentials are injected. Copy from the example and edit:
-
-```sh
-cp router/config.example.toml router/config.toml
-```
-
-See `router/config.example.toml` for the full format.
+Controls which domains the agent can access and how credentials are injected. Edit `examples/open-webui/router/config.toml` to match your needs.
 
 ### Credential injection
 
@@ -43,7 +28,7 @@ The router uses a naming convention to replace dummy credentials with real ones.
 ```yaml
 # compose.override.yml
 services:
-  open-webui:
+  app:
     environment:
       # Sandbox sees only the marker, never the real key
       - ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY
@@ -53,15 +38,7 @@ services:
       - ANTHROPIC_API_KEY
 ```
 
-When the router sees `SUISOU__ANTHROPIC_API_KEY` in an outbound HTTP header, it replaces it with the real `ANTHROPIC_API_KEY` from its own environment. The matching header is defined in `router/config.toml` under `[services.<name>.credentials]`. Open WebUI can use these environment variables directly, or you can refer to them when configuring model providers and external integrations.
-
-### `compose.override.yml`
-
-Optional. Use this for per-user Docker Compose overrides (credentials, extra services, etc.). Docker Compose automatically merges this with `compose.yml`.
-
-```sh
-cp compose.override.example.yml compose.override.yml
-```
+When the router sees `SUISOU__ANTHROPIC_API_KEY` in an outbound HTTP header, it replaces it with the real `ANTHROPIC_API_KEY` from its own environment. The matching header is defined in `router/config.toml` under `[services.<name>.credentials]`.
 
 ### Secrets
 
@@ -86,23 +63,23 @@ doppler secrets set ANTHROPIC_API_KEY=sk-ant-...
 #### Running with secrets injected
 
 ```sh
-doppler run -- docker compose up
+doppler run -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
 ```
 
 If you need to specify a project or config explicitly (e.g. in CI):
 
 ```sh
-doppler run -p PROJECT -c CONFIG -- docker compose up
+doppler run -p PROJECT -c CONFIG -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
 ```
 
 #### Other options
 
 ```sh
 # 1Password CLI
-op run --env-file=.env -- docker compose up
+op run --env-file=.env -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
 ```
 
-Passing secrets inline (e.g. `ANTHROPIC_API_KEY=sk-ant-... docker compose up`) is not recommended — the value ends up in shell history and, if run through an AI agent, in its session context as well.
+Passing secrets inline (e.g. `ANTHROPIC_API_KEY=sk-ant-... docker compose -f compose.yml -f examples/open-webui/compose.override.yml up`) is not recommended — the value ends up in shell history and, if run through an AI agent, in its session context as well.
 
 ## Remote Access
 
@@ -116,25 +93,13 @@ Then open `http://localhost:3000/` in a browser.
 
 ## Services
 
-### open-webui
+### app
 
 The Open WebUI container. Interact with it using standard Docker commands:
 
 ```sh
-docker compose exec open-webui bash
+docker compose exec app bash
 ```
-
-### wg-client
-
-Establishes a WireGuard tunnel to the router and enforces an iptables kill-switch that blocks all outbound traffic except through the tunnel. The Open WebUI container shares this network namespace but has no `NET_ADMIN` capability, so it cannot alter the firewall rules.
-
-### router
-
-Proxies and controls the agent's outbound internet access via mitmproxy in WireGuard mode.
-
-- All traffic from the agent is transparently intercepted through the WireGuard tunnel — no `HTTP_PROXY` configuration required.
-- Allows or blocks requests per domain and HTTP method via a service-based allowlist.
-- For configured services, transparently replaces `SUISOU__*` credential markers in outbound requests with real values.
 
 ## External service integrations
 
@@ -166,7 +131,7 @@ Add to `compose.override.yml`:
 
 ```yaml
 services:
-  open-webui:
+  app:
     environment:
       - MOLTBOOK_API_KEY=SUISOU__MOLTBOOK_API_KEY
   router:
@@ -176,7 +141,7 @@ services:
 
 **Step 5 — Add the service to `router/config.toml`**
 
-Uncomment the Moltbook block (see `router/config.example.toml`). Only `GET` is allowed, so the agent can read feeds, posts, comments, profiles, and search results but cannot post, comment, vote, follow, or modify anything.
+Uncomment the Moltbook block in `router/config.toml`. Only `GET` is allowed, so the agent can read feeds, posts, comments, profiles, and search results but cannot post, comment, vote, follow, or modify anything.
 
 > **Note:** Always use `www.moltbook.com` (with `www`). Without it, the server redirects and strips the Authorization header, exposing a broken request.
 
@@ -205,7 +170,7 @@ Add to `compose.override.yml`:
 
 ```yaml
 services:
-  open-webui:
+  app:
     environment:
       - DISCORD_BOT_TOKEN=SUISOU__DISCORD_BOT_TOKEN
   router:
@@ -215,4 +180,4 @@ services:
 
 **Step 4 — Add the service to `router/config.toml`**
 
-Uncomment the Discord block (see `router/config.example.toml`). It allows GET/POST/PUT/PATCH/DELETE on `discord.com` (REST API), GET on `cdn.discordapp.com` (attachments), and unrestricted access to `gateway.discord.gg` and `*.discord.gg` (WebSocket gateway).
+Uncomment the Discord block in `router/config.toml`. It allows GET/POST/PUT/PATCH/DELETE on `discord.com` (REST API), GET on `cdn.discordapp.com` (attachments), and unrestricted access to `gateway.discord.gg` and `*.discord.gg` (WebSocket gateway).

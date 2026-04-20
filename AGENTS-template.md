@@ -27,57 +27,86 @@ rm -rf examples/
 
 ## 3. Replace placeholders
 
-Rename the Compose service from `app` to your application name, pick an
-image or build context, and publish the ports your application needs on
-`wg-client`:
+The base `compose.yml` is fixed and should not be modified.  All
+app-specific configuration goes in `compose.override.yml`.
 
-- `sandbox/Dockerfile` — start from one of `examples/<app>/sandbox/` if
-  a matching example exists; otherwise replace the placeholder image and
-  preserve the `ENTRYPOINT` line.
-- `compose.yml` — rename the `app` service, add per-app volumes, and
-  uncomment `wg-client.ports` with the port list you want exposed.
-- `sandbox/entrypoint.sh` — usually untouched.  The only customization
-  that belongs here is the final `exec` line (e.g. switching to
-  `exec gosu <user> "$@"` if your Dockerfile needs to drop from root).
+Copy from an example if one exists:
 
-## 4. Configure the allowlist
+```sh
+# Example: ComfyUI
+cp examples/comfyui/sandbox/Dockerfile sandbox/Dockerfile
+cp examples/comfyui/router/config.toml router/config.toml
+cp examples/comfyui/compose.override.yml compose.override.yml
+```
 
-Copy `router/config.example.toml` to `router/config.toml` and enable
-only the `[services.<name>]` blocks your application needs.  See the
-allowlist section of @AGENTS-suisou.md for the matching semantics.
+Then edit `compose.override.yml` to adjust paths (change
+`examples/comfyui/...` to `./...`):
 
-## 5. Wire up credentials
+```yaml
+services:
+  app:
+    build:
+      context: sandbox              # was: examples/comfyui/sandbox
+    volumes:
+      - app-data:/app/data
 
-Copy `compose.override.example.yml` to `compose.override.yml` and
-declare your secrets with the `SUISOU__<ENV>` marker convention on the
-sandbox side and the plain env-var name on the router side.  Provide
-the real values via Doppler, 1Password CLI, or another secrets manager
-at runtime — do not commit them or pass them inline on the command
-line.
+  wg-client:
+    ports:
+      - "8080:8080"
 
-## 6. Rewrite the documentation
+  router:
+    environment:
+      # - ANTHROPIC_API_KEY
+
+volumes:
+  app-data:
+```
+
+If no matching example exists:
+
+- `sandbox/Dockerfile` — create your application image, preserving the
+  `ENTRYPOINT ["suisou-entrypoint.sh"]` line.
+- `router/config.toml` — copy from `router/config.example.toml` and
+  enable only the services your application needs.
+- `compose.override.yml` — copy from `compose.override.example.yml`
+  and customize build context, volumes, and ports.
+
+## 4. Wire up credentials
+
+Add credential injection to `compose.override.yml`:
+
+```yaml
+services:
+  app:
+    environment:
+      - ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY  # sandbox sees marker
+
+  router:
+    environment:
+      - ANTHROPIC_API_KEY  # router receives real value
+```
+
+Provide real values via Doppler, 1Password CLI, or another secrets
+manager at runtime — do not commit them or pass them inline.
+
+## 5. Rewrite the documentation
 
 The template ships `AGENTS.md` describing itself; your project needs
 its own.  A minimal starting structure:
 
 ```
-README.md              — 1–2 paragraph overview of the derived sandbox,
-                         pointing at AGENTS-user.md for setup.
-AGENTS.md              — short, imports AGENTS-suisou.md and the user
-                         and developer guides via @-imports.
+README.md              — 1–2 paragraph overview, pointing at AGENTS-user.md.
+AGENTS.md              — short, imports AGENTS-suisou.md and other guides.
 AGENTS-suisou.md       — kept as-is; synced from the template.
-AGENTS-user.md         — how to run this sandbox: required env vars,
-                         exposed ports, Doppler setup.
-AGENTS-developer.md    — app-specific contributor notes: how to test
-                         the particular application, what makes this
-                         allowlist opinionated, etc.
+AGENTS-user.md         — how to run: env vars, ports, Doppler setup.
+AGENTS-developer.md    — app-specific contributor notes.
 CLAUDE.md              — @AGENTS.md.
 ```
 
 Delete this `AGENTS-template.md` once you have finished the steps
 above.
 
-## 7. Build and verify
+## 6. Build and verify
 
 ```sh
 docker compose config -q

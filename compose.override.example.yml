@@ -1,19 +1,22 @@
-# compose.override.yml — personal overrides (auto-merged with compose.yml)
+# compose.override.yml — project-specific overrides (auto-merged with compose.yml)
 # Copy this file to compose.override.yml and edit as needed.
 #
-# The SUISOU__<ENV> marker convention keeps real secrets out of the sandbox
-# container.  The sandbox sees only the marker string; the router receives
-# the real value from its own environment and substitutes it into outbound
-# requests (HTTP headers or WebSocket JSON payloads matched in config.toml).
+# Credential injection:
+#   app.environment:
+#     - ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY
+#   router.environment:
+#     - ANTHROPIC_API_KEY
 
 services:
   app:
-    environment:
-      # - ANTHROPIC_API_KEY=SUISOU__ANTHROPIC_API_KEY
-      # - OPENAI_API_KEY=SUISOU__OPENAI_API_KEY
+    build:
+      context: sandbox
+    volumes:
+      - app-data:/app/data
 
-  router:
-    environment:
-      # - ANTHROPIC_API_KEY
-      # - OPENAI_API_KEY
-      # - GITHUB_TOKEN
+  wg-client:
+    ports:
+      - "8080:8080"
+
+volumes:
+  app-data:

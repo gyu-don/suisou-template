@@ -1,0 +1,63 @@
+# ComfyUI router configuration
+#
+# This allowlist is tuned for ComfyUI with ComfyUI-Manager.
+# Custom node installation requires GitHub (read-only) and registry.comfy.org;
+# Python dependencies are resolved by pip / uv from PyPI.
+#
+# Model-hosting services (HuggingFace, CivitAI) are commented out — uncomment
+# only the registries you actively use.
+
+# --- GitHub ---
+# Custom node repositories and dependency sources hosted on GitHub.
+# POST is restricted to git-upload-pack (clone/fetch) so push is blocked.
+[services.github-git]
+endpoints = [
+  { domain = "github.com",             methods = ["GET"] },
+  { domain = "github.com",             methods = ["POST"], paths = ["/*/git-upload-pack"] },
+  { domain = "*.github.com",           methods = ["GET"] },
+  { domain = "*.githubusercontent.com", methods = ["GET"] },
+]
+
+# --- ComfyUI Registry ---
+# ComfyUI-Manager queries this registry to browse and install custom nodes.
+[services.comfyui-registry]
+endpoints = [
+  { domain = "registry.comfy.org", methods = ["GET", "POST"] },
+]
+
+# --- Python packages ---
+# pip and uv download packages from PyPI.
+[services.pypi]
+endpoints = [
+  { domain = "pypi.org",               methods = ["GET"] },
+  { domain = "files.pythonhosted.org", methods = ["GET"] },
+]
+
+# --- uv ---
+# uv fetches its own binaries and tool metadata from astral.sh.
+[services.uv]
+endpoints = [
+  { domain = "astral.sh",   methods = ["GET"] },
+  { domain = "*.astral.sh", methods = ["GET"] },
+]
+
+# --- Model hosting ---
+# Uncomment to allow downloading models at runtime.
+#
+# [services.huggingface]
+# endpoints = [
+#   { domain = "huggingface.co",              methods = ["GET"] },
+#   { domain = "*.huggingface.co",            methods = ["GET"] },
+#   { domain = "cdn-lfs.huggingface.co",      methods = ["GET"] },
+#   { domain = "cdn-lfs-us-1.huggingface.co", methods = ["GET"] },
+# ]
+#
+# [services.huggingface.credentials]
+# header = "authorization"
+# env    = "HUGGING_FACE_HUB_TOKEN"
+#
+# [services.civitai]
+# endpoints = [
+#   { domain = "civitai.com",       methods = ["GET"] },
+#   { domain = "image.civitai.com", methods = ["GET"] },
+# ]
