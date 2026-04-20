@@ -1,0 +1,66 @@
+# Rename this file to AGENTS-user.md after creating your sandbox.
+#
+# AGENTS-user.md is the user-facing guide for running the derived
+# sandbox.  Fill in the sections below with details specific to your
+# application.
+
+# User guide
+
+Overview paragraph: what this sandbox wraps and what it is for.  Link
+to the upstream application's documentation.
+
+## Prerequisites
+
+- Docker and Docker Compose
+- Linux kernel 5.6+ (for built-in WireGuard support)
+- <add application-specific requirements — GPU drivers, host services, etc.>
+
+## Quick start
+
+```sh
+cp router/config.example.toml router/config.toml
+cp compose.override.example.yml compose.override.yml
+# edit both files as needed
+docker compose build
+docker compose up
+```
+
+## Configuration
+
+### `router/config.toml`
+
+List the `[services.<name>]` blocks this application actually needs and
+briefly explain why.
+
+### `compose.override.yml`
+
+List the `SUISOU__<ENV>` markers this application uses and which service
+each one authenticates against.  Reference `AGENTS-suisou.md` for the
+marker convention.
+
+### Secrets
+
+Recommend a secrets manager (Doppler / 1Password CLI / `op run`).
+Inline command-line secrets are recorded in shell history and in any
+AI-agent session context, so avoid them.
+
+## Exposed ports
+
+List the ports this application publishes on `wg-client` and how users
+connect (directly, via SSH tunnel, etc.).
+
+## External service integrations
+
+For each third-party service the application talks to (LLM provider,
+storage, etc.), cover:
+
+1. How to register / obtain credentials.
+2. Which `SUISOU__<ENV>` marker corresponds to which secret.
+3. Which `[services.<name>]` block in `config.toml` allows traffic to
+   that service.
+
+## Updating the core from the template
+
+When `suisou-template` publishes a security fix, pull it in with the
+`git checkout template/main -- <paths>` recipe documented in
+`AGENTS-suisou.md`.

@@ -1,0 +1,39 @@
+# Rename this file to AGENTS-developer.md after creating your sandbox.
+#
+# AGENTS-developer.md captures contributor notes that are specific to
+# this derived project — app-specific entrypoint conventions, why the
+# allowlist looks the way it does, how to test the particular
+# application end-to-end, and so on.
+#
+# Shared guidance (version-control style, security boundary, mandatory
+# verification checklist) already lives in AGENTS-suisou.md; do not
+# duplicate it here.  Instead, add only what is specific to this
+# repository.
+
+# Developer guide
+
+## Project scope
+
+One or two sentences describing what this repository adds on top of the
+suisou-template baseline.
+
+## Build and run
+
+Any derived-project-specific build flags, GPU configuration, volumes,
+etc. that aren't already obvious from `compose.yml`.
+
+## Testing the application
+
+End-to-end smoke tests that exercise the application itself, beyond the
+suisou verification checklist in `AGENTS-suisou.md`.  For example: a
+workflow that pulls a model from HuggingFace, a message that hits the
+LLM endpoint, etc.
+
+## Allowlist rationale
+
+Brief notes on why the enabled `[services.<name>]` blocks are what they
+are — especially any deviations from `router/config.example.toml`.
+
+## Known issues
+
+Anything app-specific that bites people repeatedly.
