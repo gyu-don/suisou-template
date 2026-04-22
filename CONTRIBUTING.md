@@ -32,7 +32,7 @@ that every derived project starts from.  Specifically:
 
 - `router/` and `wg-client/`: the enforcement layer.
 - `sandbox/entrypoint.sh`: the CA-install and DNS-setup glue.
-- `sandbox/Dockerfile` and `compose.yml`: placeholders that every
+- `sandbox/Dockerfile` and `compose.yaml`: placeholders that every
   derived project rewrites.  Changes here should keep them small and
   unopinionated.
 - `router/config.example.toml`: a menu of common allowlist services;
@@ -46,7 +46,7 @@ What does **not** belong here:
 - Application-specific sandbox images (those live in derived projects,
   with a reference copy under `examples/`).
 - Project-specific `router/config.toml` (derived-project concern).
-- Personal credentials or `compose.override.yml`.
+- Personal credentials or `compose.override.yaml`.
 
 ## Security-critical changes
 
@@ -76,7 +76,7 @@ them.
 
 `examples/<app>/` should build against the current `router/` and
 `wg-client/` and should pass the verification checklist.  When you
-change the placeholder `sandbox/Dockerfile` or `compose.yml`, make the
+change the placeholder `sandbox/Dockerfile` or `compose.yaml`, make the
 analogous change in each example so that a user who copies from
 `examples/` ends up with a working sandbox on the first try.
 

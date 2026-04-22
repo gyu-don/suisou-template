@@ -9,6 +9,7 @@ A Docker Compose-based sandbox environment for [ComfyUI](https://www.comfy.org/)
 - **router** — mitmproxy in WireGuard mode. Enforces domain allowlist (`router/config.toml`) and credential injection.
 
 Default allowlist: GitHub (read-only), `registry.comfy.org`, PyPI, `astral.sh`. Model hosting is commented out.
+The example `compose.override.yaml` exposes port `8188` and persists `/app` in a named volume.
 
 ## Documentation
 

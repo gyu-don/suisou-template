@@ -20,7 +20,7 @@ suisou-template baseline.
 ## Build and run
 
 Any derived-project-specific build flags, GPU configuration, volumes,
-etc. that aren't already obvious from `compose.yml`.
+etc. that aren't already obvious from `compose.yaml`.
 
 ## Testing the application
 

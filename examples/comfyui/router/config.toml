@@ -10,7 +10,7 @@
 # --- GitHub ---
 # Custom node repositories and dependency sources hosted on GitHub.
 # POST is restricted to git-upload-pack (clone/fetch) so push is blocked.
-[services.github-git]
+[services.github]
 endpoints = [
   { domain = "github.com",             methods = ["GET"] },
   { domain = "github.com",             methods = ["POST"], paths = ["/*/git-upload-pack"] },
@@ -26,11 +26,13 @@ endpoints = [
 ]
 
 # --- Python packages ---
-# pip and uv download packages from PyPI.
-[services.pypi]
+# pip and uv download packages from PyPI, PyTorch, NVIDIA.
+[services.pip]
 endpoints = [
   { domain = "pypi.org",               methods = ["GET"] },
   { domain = "files.pythonhosted.org", methods = ["GET"] },
+  { domain = "download*.pytorch.org", methods = ["GET"] },
+  { domain = "pypi.nvidia.com",       methods = ["GET"] },
 ]
 
 # --- uv ---
@@ -40,6 +42,14 @@ endpoints = [
   { domain = "astral.sh",   methods = ["GET"] },
   { domain = "*.astral.sh", methods = ["GET"] },
 ]
+
+# --- apt repositories ---
+# Uncomment to allow downloading packages from apt at runtime.
+# [services.apt]
+# endpoints = [
+#   { domain = "ports.ubuntu.com", methods = ["GET", "POST"], allow_plain_http = true },
+#   { domain = "developer.download.nvidia.com", methods = ["GET", "POST"] },
+# ]
 
 # --- Model hosting ---
 # Uncomment to allow downloading models at runtime.

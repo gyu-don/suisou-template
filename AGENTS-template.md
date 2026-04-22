@@ -27,8 +27,8 @@ rm -rf examples/
 
 ## 3. Replace placeholders
 
-The base `compose.yml` is fixed and should not be modified.  All
-app-specific configuration goes in `compose.override.yml`.
+The base `compose.yaml` is fixed and should not be modified.  All
+app-specific configuration goes in `compose.override.yaml`.
 
 Copy from an example if one exists:
 
@@ -36,10 +36,10 @@ Copy from an example if one exists:
 # Example: ComfyUI
 cp examples/comfyui/sandbox/Dockerfile sandbox/Dockerfile
 cp examples/comfyui/router/config.toml router/config.toml
-cp examples/comfyui/compose.override.yml compose.override.yml
+cp examples/comfyui/compose.override.yaml compose.override.yaml
 ```
 
-Then edit `compose.override.yml` to adjust paths (change
+Then edit `compose.override.yaml` to adjust paths (change
 `examples/comfyui/...` to `./...`):
 
 ```yaml
@@ -68,12 +68,12 @@ If no matching example exists:
   `ENTRYPOINT ["suisou-entrypoint.sh"]` line.
 - `router/config.toml` — copy from `router/config.example.toml` and
   enable only the services your application needs.
-- `compose.override.yml` — copy from `compose.override.example.yml`
+- `compose.override.yaml` — copy from `compose.override.example.yaml`
   and customize build context, volumes, and ports.
 
 ## 4. Wire up credentials
 
-Add credential injection to `compose.override.yml`:
+Add credential injection to `compose.override.yaml`:
 
 ```yaml
 services:

@@ -3,7 +3,7 @@
 This is the template repository for building a [suisou](https://github.com/gyu-don/suisou)
 sandbox around a specific application.  It is not itself a runnable
 sandbox — use the **Use this template** button on GitHub to create a new
-repository, then replace the placeholder `sandbox/` and `compose.yml`
+repository, then replace the placeholder `sandbox/` and `compose.yaml`
 `app` service with your application.
 
 The core mechanics (router, wg-client, credential injection, allowlist
