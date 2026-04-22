@@ -19,10 +19,10 @@ to the upstream application's documentation.
 
 ```sh
 cp router/config.example.toml router/config.toml
-cp compose.override.example.yml compose.override.yml
+cp compose.override.example.yaml compose.override.yaml
 # edit both files as needed
-docker compose -f compose.yml -f compose.override.yml build
-docker compose -f compose.yml -f compose.override.yml up
+docker compose -f compose.yaml -f compose.override.yaml build
+docker compose -f compose.yaml -f compose.override.yaml up
 ```
 
 ## Configuration
@@ -32,7 +32,7 @@ docker compose -f compose.yml -f compose.override.yml up
 List the `[services.<name>]` blocks this application actually needs and
 briefly explain why.
 
-### `compose.override.yml`
+### `compose.override.yaml`
 
 List the `SUISOU__<ENV>` markers this application uses and which service
 each one authenticates against.  Reference `AGENTS-suisou.md` for the

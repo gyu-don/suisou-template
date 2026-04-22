@@ -8,10 +8,12 @@ A Docker Compose sandbox for [ComfyUI](https://www.comfy.org/) with controlled n
 
 ```sh
 # From repository root
-docker compose -f compose.yml -f examples/comfyui/compose.override.yml up
+docker compose -f compose.yaml -f examples/comfyui/compose.override.yaml up
 ```
 
 Open http://localhost:8188/.
+
+The example override publishes port `8188` and persists `/app` in a Docker volume so custom nodes, models, and outputs survive container rebuilds.
 
 ## Documentation
 

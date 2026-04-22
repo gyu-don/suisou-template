@@ -8,7 +8,7 @@ The router (mitmproxy) enforces a domain allowlist and transparently injects sec
 
 ```sh
 # From repository root
-docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
+docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up
 ```
 
 Open http://localhost:3000/.

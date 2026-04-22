@@ -10,7 +10,7 @@ Open WebUI docs: <https://docs.openwebui.com/>
 ## Quick Start
 
 ```sh
-docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
+docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up
 ```
 
 Open <http://localhost:3000/>.
@@ -23,10 +23,10 @@ Controls which domains the agent can access and how credentials are injected. Ed
 
 ### Credential injection
 
-The router uses a naming convention to replace dummy credentials with real ones. This requires settings in two places — `compose.override.yml` configures both together:
+The router uses a naming convention to replace dummy credentials with real ones. This requires settings in two places — `compose.override.yaml` configures both together:
 
 ```yaml
-# compose.override.yml
+# compose.override.yaml
 services:
   app:
     environment:
@@ -63,23 +63,23 @@ doppler secrets set ANTHROPIC_API_KEY=sk-ant-...
 #### Running with secrets injected
 
 ```sh
-doppler run -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
+doppler run -- docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up
 ```
 
 If you need to specify a project or config explicitly (e.g. in CI):
 
 ```sh
-doppler run -p PROJECT -c CONFIG -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
+doppler run -p PROJECT -c CONFIG -- docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up
 ```
 
 #### Other options
 
 ```sh
 # 1Password CLI
-op run --env-file=.env -- docker compose -f compose.yml -f examples/open-webui/compose.override.yml up
+op run --env-file=.env -- docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up
 ```
 
-Passing secrets inline (e.g. `ANTHROPIC_API_KEY=sk-ant-... docker compose -f compose.yml -f examples/open-webui/compose.override.yml up`) is not recommended — the value ends up in shell history and, if run through an AI agent, in its session context as well.
+Passing secrets inline (e.g. `ANTHROPIC_API_KEY=sk-ant-... docker compose -f compose.yaml -f examples/open-webui/compose.override.yaml up`) is not recommended — the value ends up in shell history and, if run through an AI agent, in its session context as well.
 
 ## Remote Access
 
@@ -127,7 +127,7 @@ Set `MOLTBOOK_API_KEY` to the value returned in step 1, using whichever method y
 
 **Step 4 — Configure credential injection**
 
-Add to `compose.override.yml`:
+Add to `compose.override.yaml`:
 
 ```yaml
 services:
@@ -166,7 +166,7 @@ Set `DISCORD_BOT_TOKEN` to the token from the Developer Portal, using whichever 
 
 **Step 3 — Configure credential injection**
 
-Add to `compose.override.yml`:
+Add to `compose.override.yaml`:
 
 ```yaml
 services:

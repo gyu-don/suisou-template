@@ -12,7 +12,7 @@ exfiltrating data or credentials.
 1. Click **Use this template → Create a new repository** on GitHub.
 2. Clone the new repository and follow the step-by-step guide in
    [AGENTS-template.md](AGENTS-template.md).
-3. Keep `compose.yml`, `router/`, `wg-client/`, `sandbox/entrypoint.sh`, and
+3. Keep `compose.yaml`, `router/`, `wg-client/`, `sandbox/entrypoint.sh`, and
    `AGENTS-suisou.md` unmodified in your derived project — they are the
    security boundary and are kept in sync with this template.
 
@@ -25,7 +25,7 @@ Existing implementations:
 Run an example from the repo root:
 
 ```sh
-docker compose -f compose.yml -f examples/comfyui/compose.override.yml up
+docker compose -f compose.yaml -f examples/comfyui/compose.override.yaml up
 ```
 
 ## Contributing to the template itself

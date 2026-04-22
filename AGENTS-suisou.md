@@ -24,7 +24,7 @@ code (agents, custom nodes, plugins).  The goals are:
 
 ## Services
 
-A suisou stack has three services, defined in `compose.yml`.
+A suisou stack has three services, defined in `compose.yaml`.
 
 ### `app` (sandbox)
 
@@ -145,7 +145,7 @@ The following are the security boundary.  Never edit them locally; any
 bug fix or feature must flow through the `suisou-template` repository so
 it applies to every derived project.
 
-- `compose.yml` (base service definitions; customize via `compose.override.yml`)
+- `compose.yaml` (base service definitions; customize via `compose.override.yaml`)
 - `router/Dockerfile`
 - `router/addon.py`
 - `wg-client/Dockerfile`
@@ -160,7 +160,7 @@ These exist in the template as placeholders or examples and are expected
 to be rewritten in each derived project:
 
 - `sandbox/Dockerfile` — replaced with the application's image.
-- `compose.override.yml` — app-specific overrides: build context, volumes,
+- `compose.override.yaml` — app-specific overrides: build context, volumes,
   ports, and credential injection.  Never committed (contains or references
   secrets).
 - `router/config.toml` — copied from `config.example.toml` and edited to
@@ -204,7 +204,7 @@ derived project:
 git remote add template https://github.com/gyu-don/suisou-template.git
 git fetch template
 git checkout template/main -- \
-    compose.yml \
+    compose.yaml \
     router/Dockerfile router/addon.py \
     wg-client/Dockerfile wg-client/entrypoint.sh \
     sandbox/entrypoint.sh \

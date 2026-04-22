@@ -1,12 +1,12 @@
-# Suisou base compose.yml — fixed structure, do not modify.
+# Suisou base compose.yaml — fixed structure, do not modify.
 #
-# Customize via compose.override.yml:
+# Customize via compose.override.yaml:
 #   - app: build context, volumes
 #   - wg-client: ports
 #   - router: environment (for credential injection)
 #
 # Run: docker compose up
-# With example: docker compose -f compose.yml -f examples/X/compose.override.yml up
+# With example: docker compose -f compose.yaml -f examples/X/compose.override.yaml up
 
 services:
   app:
